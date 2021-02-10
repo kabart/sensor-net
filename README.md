@@ -1,13 +1,13 @@
 ### Build:
 
 ```sh
-$ g++ -pthread -o sensornet main.cpp MainKnot.cpp Sensor.cpp
+$ g++ -pthread -std=c++17 -o build/sensornet main.cpp MainNode.cpp Sensor.cpp
 ```
 
 ### Run:
 
 ```sh
-$ ./sensornet [buffor size]
+$ ./build/sensornet [buffor size]
 ```
 
 
