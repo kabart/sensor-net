@@ -1,7 +1,7 @@
-### Build:
+### Buildng:
 
 ```sh
-$ g++ -pthread -std=c++17 -o build/sensornet main.cpp MainNode.cpp Sensor.cpp
+$ make all
 ```
 
 ### Run:
