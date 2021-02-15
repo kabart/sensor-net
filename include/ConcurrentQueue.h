@@ -1,6 +1,7 @@
 #ifndef _CONCURRENTQUEUE_H_
 #define _CONCURRENTQUEUE_H_
 
+#include <condition_variable>
 #include <mutex>
 #include <queue>
 
@@ -9,27 +10,28 @@ private:
   std::queue<Data> queue;
   unsigned int bufferSize;
   mutable std::mutex mutex;
+  std::condition_variable condVariable;
 
 public:
   ConcurrentQueue(unsigned int size) : bufferSize(size) {}
 
   void push(const Data &data) {
-    std::scoped_lock lock(mutex);
+    std::unique_lock lock(mutex);
     queue.push(data);
+    lock.unlock();
+    condVariable.notify_one();
     if (queue.size() > bufferSize) {
       queue.pop();
     }
   }
 
-  bool next(Data &data) {
-    std::scoped_lock lock(mutex);
-    if (queue.empty()) {
-      return false;
-    } else {
-      data = queue.front();
-      queue.pop();
-      return true;
+  void get(Data &data) {
+    std::unique_lock lock(mutex);
+    while (queue.empty()) {
+      condVariable.wait(lock);
     }
+    data = queue.front();
+    queue.pop();
   }
 };
 
