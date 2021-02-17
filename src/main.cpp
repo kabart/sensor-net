@@ -1,3 +1,4 @@
+#include "Buffer.h"
 #include "ConcurrentQueue.h"
 #include "MainNode.h"
 #include "Message.h"
@@ -19,7 +20,7 @@ int main(int argc, char *argv[]) {
   }
 
   cout << "Buffer size: " << bufferSize << endl;
-  ConcurrentQueue<Message> buffer(bufferSize);
+  shared_ptr<Buffer<Message>> buffer(new ConcurrentQueue<Message>(bufferSize));
 
   // //to do: create a vector of N sensors
   unique_ptr<Sensor> sensor1 =

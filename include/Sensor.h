@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 
 #include "ConcurrentQueue.h"
@@ -7,13 +8,13 @@
 class Sensor {
 public:
   Sensor(std::string sensorName, std::string fileName,
-         ConcurrentQueue<Message> &buffer);
+         std::shared_ptr<Buffer<Message>> &buffer);
   void run();
 
 private:
   std::string name;
   DataSource source;
-  ConcurrentQueue<Message> &queue;
+  std::shared_ptr<Buffer<Message>> &queue;
 };
 
 // todo: add logging into a file

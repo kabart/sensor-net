@@ -3,11 +3,11 @@
 
 class MainNode {
 public:
-  MainNode(ConcurrentQueue<Message> &buffer);
+  MainNode(std::shared_ptr<Buffer<Message>> &buffer);
   void run();
 
 private:
-  ConcurrentQueue<Message> &queue;
+  std::shared_ptr<Buffer<Message>> &queue;
 };
 
 // to do: logging into a file instead of into cout
