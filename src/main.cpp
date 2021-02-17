@@ -1,7 +1,9 @@
 #include "Buffer.h"
-#include "ConcurrentQueue.h"
+#include "Container.h"
 #include "MainNode.h"
 #include "Message.h"
+#include "Queue.h"
+#include "SafeBuffer.h"
 #include "Sensor.h"
 
 #include <iostream>
@@ -20,15 +22,18 @@ int main(int argc, char *argv[]) {
   }
 
   cout << "Buffer size: " << bufferSize << endl;
-  shared_ptr<Buffer<Message>> buffer(new ConcurrentQueue<Message>(bufferSize));
+  unique_ptr<Container<Message>> queue =
+      make_unique<Queue<Message>>(bufferSize);
+  shared_ptr<Buffer<Message>> buffer =
+      make_shared<SafeBuffer<Message>>(move(queue));
 
-  // //to do: create a vector of N sensors
+  // to do: create a vector of N sensors
   unique_ptr<Sensor> sensor1 =
-      make_unique<Sensor>("Heat sensor", "temperature", buffer);
+      make_unique<Sensor>("Heat sensor", "data/temperature", buffer);
   thread thread1(&Sensor::run, move(sensor1));
 
   unique_ptr<Sensor> sensor2 =
-      make_unique<Sensor>("Speed sensor", "speed", buffer);
+      make_unique<Sensor>("Speed sensor", "data/speed", buffer);
   thread thread2(&Sensor::run, move(sensor2));
 
   unique_ptr<MainNode> mainNode = make_unique<MainNode>(buffer);
