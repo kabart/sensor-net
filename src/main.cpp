@@ -1,8 +1,8 @@
 #include "Buffer.h"
 #include "Container.h"
+#include "CyclicRing.h"
 #include "MainNode.h"
 #include "Message.h"
-#include "Queue.h"
 #include "SafeBuffer.h"
 #include "Sensor.h"
 
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
   cout << "Buffer size: " << bufferSize << endl;
   unique_ptr<Container<Message>> queue =
-      make_unique<Queue<Message>>(bufferSize);
+      make_unique<CyclicRing<Message>>(bufferSize);
   shared_ptr<Buffer<Message>> buffer =
       make_shared<SafeBuffer<Message>>(move(queue));
 
