@@ -11,9 +11,11 @@ LDFLAGS = -Llib
 
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:$(SOURCEDIR)/%.cpp=$(BUILDDIR)/%.o)
-DEPENDS = ${OBJECTS:.o=.d} 
+DEPENDS = ${OBJECTS:.o=.d}
 
-all: $(TARGET)
+all: target test
+
+target: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
@@ -28,3 +30,30 @@ $(BUILDDIR):
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS) $(DEPENDS)
+
+TESTDIR = test
+GTESTDIR = /usr/src/gtest/lib
+BUILDTEST = build-test
+
+TESTSRC = $(wildcard $(TESTDIR)/*.cpp)
+TESTOBJ = $(TESTSRC:$(TESTDIR)/%.cpp=$(BUILDTEST)/%.o)
+
+TEST = $(BUILDTEST)/runTests
+
+GTESTFLAGS = -g -L$(GTESTDIR) -lgtest -lgtest_main -lpthread
+
+test: $(TEST)
+
+$(TEST): $(TESTOBJ)
+	$(CC) $(CFLAGS) $(TESTSRC) $(GTESTDIR)/libgtest.a -o $(TEST)
+
+$(BUILDTEST)/%.o: $(TESTDIR)/%.cpp | $(BUILDTEST)
+	$(CC) $(CFLAGS) $(GTESTFLAGS) -c $^ -o $@
+
+$(BUILDTEST):
+	mkdir -p $@
+
+cleanAll: clean cleanTest
+
+cleanTest:
+	$(RM) $(TEST) $(TESTOBJ)
